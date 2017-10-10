@@ -1,5 +1,5 @@
 defmodule Jobhunter do
-  @@doc """
+  @doc """
   
   to play with this you mush run
 
@@ -9,10 +9,19 @@ defmodule Jobhunter do
   """
 
   def run(address) do
-    case cache_exists(hash(address)) do
-        {:error, _} -> grab_data(address)
-        {:ok, _} -> "This query has already been cached. Do something with it now"
+    data =
+    if cache_exists(hash(address)) do
+        grab_data(address)
     end
+    use_data(address)
+  end
+
+  def use_data(address) do
+    hashed = hash(address)
+    {_, string} = get_cached(hashed)
+    string 
+    |> String.to_charlist
+    |> JSON.decode
   end
 
   def grab_data(address) do
@@ -76,6 +85,10 @@ end
 
   def cache_exists(name) do
     File.stat(cache_folder_path() <> "/#{name}.json")
+  end
+
+  def get_cached(name) do
+    File.read cache_folder_path() <> "/#{name}.json"
   end
 
 
