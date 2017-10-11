@@ -1,19 +1,17 @@
+
 defmodule Jobhunter do
   @doc """
-  
-  to play with this you mush run
-
-  Jobhunter.run "new bond street london"
-
-
+    to play with this you mush run
+    Jobhunter.run "new bond street london"
   """
 
   def run(address) do
     data =
-    if cache_exists(hash(address)) do
-        grab_data(address)
-    end
-    use_data(address)
+      if cache_exists(hash(address)) do
+          grab_data(address)
+      end
+    mapped = use_data(address)
+    mapped.queries
   end
 
   def use_data(address) do
@@ -21,7 +19,7 @@ defmodule Jobhunter do
     {_, string} = get_cached(hashed)
     string 
     |> String.to_charlist
-    |> JSON.decode
+    |> Poison.decode keys: :atoms
   end
 
   def grab_data(address) do
