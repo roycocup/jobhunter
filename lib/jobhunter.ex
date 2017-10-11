@@ -11,7 +11,7 @@ defmodule Jobhunter do
           grab_data(address)
       end
     mapped = use_data(address)
-    mapped.queries
+    # mapped.queries
   end
 
   def use_data(address) do
