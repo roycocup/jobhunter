@@ -1,0 +1,2 @@
+- Read json
+- Stop requesting http if theres cache
