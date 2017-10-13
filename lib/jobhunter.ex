@@ -11,27 +11,28 @@ defmodule Jobhunter do
         {:ok, _} -> use_data(address)
         {:error, _} -> fetch_and_cache_data(address)
       end
+      
+      # Map.to_list(data)
     end
 
     def use_data(address) do
-      address
       {_, string} = get_cached(hash(address))
       string
-      |> String.to_charlist
-      |> Poison.decode keys: :atoms
+      |> String.to_charlist()
+      |> Poison.decode(keys: :atoms)
     end
 
     def fetch_and_cache_data(address) do
       address
-      |> sanitize_query
-      |> google
-      |> get_body
+      |> sanitize_query()
+      |> google()
+      |> get_body()
       |> write_cache(hash(address))
     end
 
     def hash(hashable) do
       :crypto.hash(:sha, hashable)
-      |> Base.encode16
+      |> Base.encode16()
     end
 
     def google(query) do
