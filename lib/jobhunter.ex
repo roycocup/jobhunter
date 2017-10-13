@@ -6,23 +6,22 @@ defmodule Jobhunter do
   """
 
   def run(address) do
-    data =
-      if cache_exists(hash(address)) do
-          grab_data(address)
+      data =
+      case cache_exists?(hash(address)) do
+          {:ok, _} -> use_data(address)
+          {:error, _} -> fetch_and_cache_data(address)
       end
-    mapped = use_data(address)
-    # mapped.queries
   end
 
   def use_data(address) do
-    hashed = hash(address)
-    {_, string} = get_cached(hashed)
-    string 
+      address
+    {_, string} = get_cached(hash(address))
+    string
     |> String.to_charlist
     |> Poison.decode keys: :atoms
   end
 
-  def grab_data(address) do
+  def fetch_and_cache_data(address) do
     address
     |> sanitize_query
     |> google
@@ -60,7 +59,7 @@ end
   end
 
   def create_cache_folder do
-    cache_folder_path()    
+    cache_folder_path()
     |> File.mkdir!();
   end
 
@@ -69,19 +68,19 @@ end
   end
 
   def write_cache(content, name) do
-    
+
     # create cache folder if not exists
     case File.stat(cache_folder_path()) do
       {:ok, _} -> :ok
       _ -> create_cache_folder()
     end
-    
+
     {:ok, pid} = File.open cache_folder_path() <> "/#{name}.json", [:write, :utf8]
     IO.binwrite pid, content
     File.close pid
   end
 
-  def cache_exists(name) do
+  def cache_exists?(name) do
     File.stat(cache_folder_path() <> "/#{name}.json")
   end
 
