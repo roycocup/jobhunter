@@ -24,6 +24,7 @@ defmodule Jobhunter.Mixfile do
       {:httpotion, "~> 3.0.2"},
       {:json, "~> 1.0.2"},
       {:poison, "~> 3.1"},
+      {:floki, "~> 0.18.0"},
     ]
   end
 end
