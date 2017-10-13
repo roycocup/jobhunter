@@ -3,71 +3,71 @@ defmodule Jobhunter do
   @doc """
     to play with this you mush run
     Jobhunter.run "new bond street london"
-  """
+    """
 
-  def run(address) do
+    def run(address) do
       data =
       case cache_exists?(hash(address)) do
-          {:ok, _} -> use_data(address)
-          {:error, _} -> fetch_and_cache_data(address)
+        {:ok, _} -> use_data(address)
+        {:error, _} -> fetch_and_cache_data(address)
       end
-  end
+    end
 
-  def use_data(address) do
+    def use_data(address) do
       address
-    {_, string} = get_cached(hash(address))
-    string
-    |> String.to_charlist
-    |> Poison.decode keys: :atoms
-  end
+      {_, string} = get_cached(hash(address))
+      string
+      |> String.to_charlist
+      |> Poison.decode keys: :atoms
+    end
 
-  def fetch_and_cache_data(address) do
-    address
-    |> sanitize_query
-    |> google
-    |> get_body
-    |> write_cache(hash(address))
-  end
+    def fetch_and_cache_data(address) do
+      address
+      |> sanitize_query
+      |> google
+      |> get_body
+      |> write_cache(hash(address))
+    end
 
-  def hash(hashable) do
-    :crypto.hash(:sha, hashable)
-    |> Base.encode16
-  end
+    def hash(hashable) do
+      :crypto.hash(:sha, hashable)
+      |> Base.encode16
+    end
 
-  def google(query) do
-    api_key = Application.get_env(:jobhunter, :google_api_key)
-    google_cx_key = Application.get_env(:jobhunter, :google_cx_key)
-    get("https://www.googleapis.com/customsearch/v1?key=#{api_key}&cx=#{google_cx_key}&q=#{query}")
-  end
+    def google(query) do
+      api_key = Application.get_env(:jobhunter, :google_api_key)
+      google_cx_key = Application.get_env(:jobhunter, :google_cx_key)
+      get("https://www.googleapis.com/customsearch/v1?key=#{api_key}&cx=#{google_cx_key}&q=#{query}")
+    end
 
-def sanitize_query(query) do
-  query
-  |> String.trim()
-  |> String.replace(" ", "%20")
-end
+    def sanitize_query(query) do
+      query
+      |> String.trim()
+      |> String.replace(" ", "%20")
+    end
 
-  def get(url) do
-    HTTPotion.get url
-  end
+    def get(url) do
+      HTTPotion.get url
+    end
 
-  def get_header(response) do
-    response.headers
-  end
+    def get_header(response) do
+      response.headers
+    end
 
-  def get_body(response) do
-    response.body
-  end
+    def get_body(response) do
+      response.body
+    end
 
-  def create_cache_folder do
-    cache_folder_path()
-    |> File.mkdir!();
-  end
+    def create_cache_folder do
+      cache_folder_path()
+      |> File.mkdir!();
+    end
 
-  def cache_folder_path do
-    "./cache"
-  end
+    def cache_folder_path do
+      "./cache"
+    end
 
-  def write_cache(content, name) do
+    def write_cache(content, name) do
 
     # create cache folder if not exists
     case File.stat(cache_folder_path()) do
