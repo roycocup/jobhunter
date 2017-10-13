@@ -1,16 +1,15 @@
 defmodule Jobhunter.Cache do
 	
 	def create_cache_folder do
-      cache_folder_path()
-      |> File.mkdir!();
-    end
+    cache_folder_path()
+    |> File.mkdir!();
+  end
 
-    def cache_folder_path do
-      "./cache"
-    end
+  def cache_folder_path do
+    "./cache"
+  end
 
-    def write_cache(content, name) do
-
+  def write_cache(content, name) do
     # create cache folder if not exists
     case File.stat(cache_folder_path()) do
       {:ok, _} -> :ok

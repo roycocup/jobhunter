@@ -3,21 +3,25 @@ defmodule Jobhunter do
 
 	alias Jobhunter.Cache
 
+	# todo: return a map when fetch and cache data
 	def run(address) do
 		data =
-		case Cache.cache_exists?(hash(address)) do
-			{:ok, _} -> use_data(address)
-			{:error, _} -> fetch_and_cache_data(address)
+			case Cache.cache_exists?(hash(address)) do
+				{:ok, _} -> use_data(address)
+				{:error, _} -> fetch_and_cache_data(address)
+			end
+		if(is_map(data)) do
+			data.items
 		end
-		|> Tuple.to_list
-		# Map.to_list(data)
+	end
+
+	defp clear do
+		IO.ANSI.clear();
 	end
 
 	def use_data(address) do
-		{_, string} = Cache.get_cached(hash(address))
-		string
-		|> String.to_charlist()
-		|> Poison.decode(keys: :atoms)
+		{_, string} = Cache.get_cached(hash(address))		
+		Poison.decode!(string, keys: :atoms)
 	end
 
 	def fetch_and_cache_data(address) do
@@ -34,6 +38,7 @@ defmodule Jobhunter do
 	end
 
 	def google(query) do
+		query = query <> "%20about%20us"
 		api_key = Application.get_env(:jobhunter, :google_api_key)
 		google_cx_key = Application.get_env(:jobhunter, :google_cx_key)
 		get("https://www.googleapis.com/customsearch/v1?key=#{api_key}&cx=#{google_cx_key}&q=#{query}")
@@ -56,8 +61,5 @@ defmodule Jobhunter do
 	def get_body(response) do
 		response.body
 	end
-
-
-
 
 end
