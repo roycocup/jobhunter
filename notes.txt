@@ -1,0 +1,6 @@
+Notes:
+
+Include news channels
+Include "about us"
+Include "careers|career|jobs|job" as links
+Include twitter feeds
